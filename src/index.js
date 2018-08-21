@@ -3,146 +3,60 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 
-// class Square extends React.Component {
-//   render() {
-//     return (
-//       <button 
-//         className="square" 
-//         onClick={() => this.props.onClick({value: 'X'}) }
-//       >
-//         {this.props.value}
-//       </button>
-//     );
-//   }
-// }
-
-function Square(props) {
-  return (
-    <button className="square" onClick={props.onClick}>
-    {props.value}
-    </button>
-  );
-}
+const { raceRange, rates } = require('pec')
 
 
-class Board extends React.Component {
-
-  renderSquare(i) {
-    return (
-      <Square 
-        value={this.props.squares[i]}
-        onClick={() => this.props.onClick(i)}
-      />
-      );
-  }
-
-  render() {
-   
-
-    return (
-      <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
-  }
-}
-
-class Game extends React.Component { 
+class P1RangeForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      history: [{
-        squares: Array(9).fill(null),
-      }],
-      xIsNext: true,
-    }
+    this.state = {value: ''};
+
+    this.handleChange = this.handleChange.bind(this);
   }
 
-  handleClick(i) {
-
-    const history = this.state.history;
-    const current = history[history.length-1];
-    const squares = current.squares.slice();
-    
-    if (calculateWinner(squares) || squares[i]) {
-      return;
-    }
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.setState({
-      history: history.concat([{
-        squares: squares,
-      }]),
-      xIsNext: !this.state.xIsNext,
-    });
+  handleChange(event) {
+    this.setState({value: event.target.value});
+    // alert('this.state.value: ' + this.state.value);
   }
 
-  render() {
 
-    const history = this.state.history;
-    const current = history[history.length - 1];
-    const winner = calculateWinner(current.squares);
-
-    let status;
-    if (winner) {
-      status = 'Winner: ' + winner;
-    } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    }
-
+  render () {
     return (
-      <div className="game">
-        <div className="game-board">
-          <Board 
-            squares={current.squares}
-            onClick={(i) => this.handleClick(i)}
-          />
-        </div>
-        <div className="game-info">
-          <div>{status}</div>
-          <ol>{/* TODO */}</ol>
-        </div>
-      </div>
-    );
+      <form>
+        <label>
+          P1 Range Text Input:
+          <input type='text' value={this.state.value} onChange={this.handleChange} />
+        </label>
+      </form>
+    )
   }
+  
 }
 
-// ========================================
+
+
+const combo = [ 'Jh', 'Js' ]
+const range = [
+  [ 'Kh', 'Ks' ], [ 'Kh', 'Kd' ], [ 'Kh', 'Kc' ],
+  [ 'Ks', 'Kd' ], [ 'Ks', 'Kc' ], [ 'Kd', 'Kc' ],
+  [ 'Qh', 'Qs' ], [ 'Qh', 'Qd' ], [ 'Qh', 'Qc' ],
+  [ 'Qs', 'Qd' ], [ 'Qs', 'Qc' ], [ 'Qd', 'Qc' ]
+]
+
+const { win, loose, tie } = raceRange(combo, range, 1E4)
+const { winRate, looseRate, tieRate } = rates({ win, loose, tie })
+
+console.log('JJ performs as follows vs. [ KK, QQ ]')
+console.log('win: %d%% (%d times)', winRate, win)
+console.log('loose: %d%% (%d times)', looseRate, loose)
+console.log('tie: %d%% (%d times)', tieRate, tie)
+
+
+
+
+
 
 ReactDOM.render(
-  <Game />,
+  <P1RangeForm />,
   document.getElementById('root')
 );
-
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
-  }
-  return null;
-}
