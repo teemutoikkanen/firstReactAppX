@@ -5,6 +5,7 @@
   "dependencies": {
     "ajv": "^6.0.0",
     "pec": "^0.7.0",
+    "prange": "^0.2.3",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-scripts": "1.1.4"
