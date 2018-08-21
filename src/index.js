@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import _ from './asd';
 
 const { raceRange, rates } = require('pec')
 const prange = require('prange')
+const { expandRange, arryifyCombo } = require('./asd')
+
 
 
 class EquityCalculator extends React.Component {

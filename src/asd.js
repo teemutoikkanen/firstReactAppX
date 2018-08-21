@@ -6,7 +6,7 @@ const {
   , raceRange
   , raceRangeForBoard
   , rates
-} = require('../../')
+} = require('pec')
 const prange = require('prange')
 const { detailRange } = require('pdetail')
 const spok = require('spok')
