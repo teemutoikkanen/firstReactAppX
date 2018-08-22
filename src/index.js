@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 const { raceRange, rates } = require('pec')
-const prange = require('prange')
 const { expandRange, arryifyCombo } = require('./asd')
 
 
@@ -13,49 +12,93 @@ class EquityCalculator extends React.Component {
     this.state = {
       p1TextInput: '',
       p2TextInput: '',
-      // more vars here ..
+      winRate: 0,
+      looseRate: 0,
+      tieRate: 0,
+      p1Equity: 0,
+      p2Equity: 0,
+      nSims: 0,
+
     }
     this.handleP1Input = this.handleP1Input.bind(this);
+    this.handleP2Input = this.handleP2Input.bind(this);
     this.handleCalcButton = this.handleCalcButton.bind(this);
   }
 
   handleP1Input(event) {
     this.setState({p1TextInput: event.target.value});
-    
+  }
+  handleP2Input(event) {
+    this.setState({p2TextInput: event.target.value});
   }
 
   handleCalcButton() {
-    console.log(this.state.p1TextInput);
-    console.log(expandRange(this.state.p1TextInput))
+    const combo = this.state.p1TextInput;
+    const range = this.state.p2TextInput;
+
+    console.log("p1 combo: " + combo);
+    console.log("p2 range: " + range);
+    try {
+      const expandedRange = expandRange(range)
+      const expandedCombo = arryifyCombo(combo)
+      console.log(expandedRange);
+      console.log(expandedCombo);
+
+      const { win, loose, tie } = raceRange(expandedCombo, expandedRange, 1E4)
+      const { winRate, looseRate, tieRate } = rates({ win, loose, tie })
+
+      const p1Equity = winRate/100+0.5*tieRate/100
+
+      this.setState( {
+          p1Equity: p1Equity,
+          winRate: winRate,
+          looseRate: looseRate,
+          tieRate: tieRate,
+          p1Equity: 0,
+          p2Equity: 0,
+      });
+
+      console.log("p1eq: ", p1Equity)
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   // EquityCalculator render() function..
   render () {
     // render stuff here..
+
+    const results = this.state.winRate;
+    console.log("results: " + results)
+
     return (
       <div className="equityCalculator">
         <div className="p1TextInput">
           <form>
             <label>
-              P1 Range Text Input:
+              P1 Combo:
               <input type='text' value={this.state.p1TextInput} onChange={this.handleP1Input} />
+            </label>
+          </form>
+        </div>
+        <div className="p2TextInput">
+          <form>
+            <label>
+              P2 Range Text Input:
+              <input type='text' value={this.state.p2TextInput} onChange={this.handleP2Input} />
             </label>
           </form>
         </div>
         <div className ="calcButton">
           <button onClick={() => this.handleCalcButton()}>Calculate</button>
         </div>
+        <div className ="Results">
+        {results}
+        </div>
       </div>
     );
   }
 }
-
-
-
-
-
-
-
 
 
 
