@@ -1,8 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import Simulator from 'pokery';
+import Range from 'pokery';
 const { raceRange, rates } = require('pec')
 const { expandRange, arryifyCombo } = require('./asd')
+
+
+const pokeryTest = new Simulator(['AhKd', ['3h3d', 'AdQc']]).run();
+console.log(pokeryTest)
+
+
+// console.log(new Range('AQ').hands)
 
 
 
@@ -33,16 +42,19 @@ class EquityCalculator extends React.Component {
   }
 
   handleCalcButton() {
-    const combo = this.state.p1TextInput;
-    const range = this.state.p2TextInput;
+    const p1input = this.state.p1TextInput;
+    const p2input = this.state.p2TextInput;
 
-    console.log("p1 combo: " + combo);
-    console.log("p2 range: " + range);
+    console.log("p1 combo: " + p1input);
+    console.log("p2 range: " + p2input);
     try {
-      const expandedRange = expandRange(range)
-      const expandedCombo = arryifyCombo(combo)
+      const expandedRange = expandRange(p2input)
+      const expandedCombo = arryifyCombo(p1input)
       console.log(expandedRange);
       console.log(expandedCombo);
+
+      console.log("pokery tests: ----");
+      console.log(new Simulator(['AhAd', expandedRange]).run());
 
       const { win, loose, tie } = raceRange(expandedCombo, expandedRange, 1E4)
       const { winRate, looseRate, tieRate } = rates({ win, loose, tie })
